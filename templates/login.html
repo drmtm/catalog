@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
+<meta name="google-signin-client_id" content="472004857582-e6qqnskehmr96rlthklqjn81ok6lool2.apps.googleusercontent.com">
+  <!--LOAD PRE-REQUISITES FOR GOOGLE SIGN IN -->
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js">
+  </script>
+
+<!--!<script src="https://apis.google.com/js/platform.js?onload=start" async defer> </script> -->
+<script src="https://apis.google.com/js/platform.js?onload=onLoadCallback" async defer></script>
+<script>
+window.onLoadCallback =   function start() {
+    gapi.load('auth2', function() {
+      auth2 = gapi.auth2.init({
+        client_id: '472004857582-e6qqnskehmr96rlthklqjn81ok6lool2.apps.googleusercontent.com'
+		
+
+      });
+    });
+}
+</script>
+
+
+<!-- END PRE-REQUISITES FOR GOOGLE SIGN IN -->
+
+
+</head>
+
+
+<body>  
+<div class="container">
+<!-- Add where you want your sign-in button to render -->
+<!-- Use an image that follows the branding guidelines in a real app -->
+
+  <div class="row">
+    <form class="form-signin mg-btm">
+      <h3 class="heading-desc">Login to Items Catalog App</h3>
+    <div class="social-box">
+
+
+      <div class="row mg-btm">
+        
+          <div class="col-md-12">
+            
+              <a  onclick="javascript:auth2.grantOfflineAccess().then(signInCallback);"  >
+                
+                <button id="signinButton" class="g-signin2 btn btn-block" style="padding-left: 90px;">Login with Google</button>
+              
+              </a>
+
+          </div>
+      </div>
+
+<script>
+  $('#signinButton').click(function() {
+    // signInCallback defined in step 6.
+    auth2.grantOfflineAccess().then(signInCallback);
+  });
+</script>
+
+<div id="result"></div>
+
+<script>
+function signInCallback(authResult) {
+  console.log(authResult);
+  if (authResult['code']) {
+    // Hide the sign-in button now that the user is authorized
+    $('#signinButton').attr('style', 'display: none');
+       // Hide the facebook sign-in button now that the user is authorized
+    $('#fbloginbtn').attr('style', 'display: none');
+    // Send the one-time-use code to the server, if the server responds, write a 'login successful' message to the web page and then redirect back to the main restaurants page
+    $.ajax({
+      type: 'POST',
+      url: '/gconnect?state={{STATE}}',
+      processData: false,
+      data: authResult['code'],
+	  // Always include an `X-Requested-With` header in every AJAX request,
+      // to protect against CSRF attacks.
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      contentType: 'application/octet-stream; charset=utf-8',
+      success: function(result) {
+        // Handle or verify the server response.
+		if (result) {
+          $('#result').html('Login Successful!</br>'+ result + '</br>Redirecting...');
+          setTimeout(function() {
+          window.location.href = "/categories";
+           }, 4000);
+        }
+      },
+ 
+    });
+   } else if (authResult['error']) {
+    console.log('There was an error: ' + authResult['error']);
+  } else {
+        $('#result').html('Failed to make a server-side call. Check your configuration and console.');
+         }
+      
+}
+
+</script>
+
+
+
+<!--END GOOGLE PLUS SIGN IN -->
+
+<!--FACEBOOK SIGN IN -->
+<script>
+  window.fbAsyncInit = function() {
+  FB.init({
+    appId      : '979792502226677',
+    cookie     : true,  // enable cookies to allow the server to access
+                        // the session
+    xfbml      : true,  // parse social plugins on this page
+    version    : 'v3.3' // use version 2.8
+  });
+
+  };
+
+  // Load the SDK asynchronously
+  (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/sdk.js";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+
+  // Here we run a very simple test of the Graph API after login is
+  // successful.  See statusChangeCallback() for when this call is made.
+  function sendTokenToServer() {
+    var access_token = FB.getAuthResponse()['accessToken'];
+    console.log(access_token)
+    console.log('Welcome!  Fetching your information.... ');
+    FB.api('/me', function(response) {
+      console.log('Successful login for: ' + response.name);
+         // Hide the sign-in button now that the user is authorized
+    $('#signinButton').attr('style', 'display: none');
+       // Hide the facebook sign-in button now that the user is authorized
+    $('#fbloginbtn').attr('style', 'display: none');
+     $.ajax({
+      type: 'POST',
+      url: '/fbconnect?state={{STATE}}',
+      processData: false,
+      data: access_token,
+      contentType: 'application/octet-stream; charset=utf-8',
+      success: function(result) {
+        // Handle or verify the server response if necessary.
+        if (result) {
+          $('#result').html('Login Successful!</br>'+ result + '</br>Redirecting...')
+         setTimeout(function() {
+          window.location.href = "/categories";
+         }, 4000);
+
+
+      } else {
+        $('#result').html('Failed to make a server-side call. Check your configuration and console.');
+         }
+
+      }
+
+  });
+
+
+    });
+  }
+</script>
+
+      <div class="row">
+      <div class="col-md-12">
+               <!-- <a href="#" class="btn btn-info btn-block" >hi -->
+ <script>
+  function fb_login() {
+  FB.login( function() {}, { scope: 'email,public_profile' } );
+}
+</script>
+   <button  class="btn btn-info btn-block" >
+
+<!--
+  <fb:login-button scope="public_profile,email" onlogin="sendTokenToServer();" id="fbloginbtn">
+    <a href='javascript:sendTokenToServer()'>Login with Facebook</a>
+
+  </fb:login-button>
+-->
+
+<!-- show message " facebook login is not available yet" -->
+  
+    <a href='javascript:window.alert("Facebook login currently not available please use google sign in")'>Login with Facebook</a>
+
+  
+
+ </button>
+<!--END FACEBOOK SIGN IN -->
+
+            </div>
+          </div>
+
+    </div>
+
+     </form>
+  </div>
+</div>
+
+  </body>
+
+</html>
