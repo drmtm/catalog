@@ -1,4 +1,5 @@
-# Linux Server Configuration - Udacity fullstack nano degree project
+# Deplyable version of Items Catalog project
+## this project is part of Linux Server Configuration - Udacity fullstack nano degree project
 
 
 
@@ -71,11 +72,11 @@ N.B. From here take note of the use of first and second instances of terminals. 
 
 18. Log into the server as grader(that is log in via the second terminal window): `$ ssh -i ~/.ssh/udacity_key.rsa grader@35.181.60.203`
 
-19. Enforce the key-based authentication: `$ sudo nano /etc/ssh/sshd_config`. Find the *PasswordAuthentication* line and change 'yes' to `no`. and save changes 
+19. Enforce the key-based authentication: `$ sudo nano /etc/ssh/sshd_config`. Find the *PasswordAuthentication* line and change 'yes' to `no`. and save changes
 
 20. to Change the ssh port from 22 to 2200:  Find the *Port* line and change `22` to `2200`. and save changes.
 
-21.  to Disable ssh login for *root* user to secure the server:  Find the *PermitRootLogin* line and edit to `no`. and save changes. 
+21.  to Disable ssh login for *root* user to secure the server:  Find the *PermitRootLogin* line and edit to `no`. and save changes.
 
 22.  Restart ssh `$ sudo service ssh restart`
 
@@ -259,6 +260,3 @@ Other Resources:
 - Ubuntu Wiki, [AutomaticSecurityUpdates](https://help.ubuntu.com/community/AutomaticSecurityUpdates).
 - [Askubuntu.com](https://askubuntu.com/)
 - [Stackoverflow.com](https://stackoverflow.com/)
-
-
-
